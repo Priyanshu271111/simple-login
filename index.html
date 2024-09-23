@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 400px; margin: auto; padding: 20px; }
+        input { display: block; margin: 10px 0; width: 100%; padding: 10px; }
+        button { padding: 10px; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login</h1>
+        <input type="text" id="username" placeholder="Username" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button onclick="register()">Register</button>
+        <div id="text-box" style="display: none;">
+            <input type="text" id="userText" placeholder="Type something..." />
+            <button onclick="saveText()">Save Text</button>
+        </div>
+    </div>
+    <script>
+        async function register() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://localhost:5001/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                if (response.ok) {
+                    alert('Registration successful!');
+                    document.getElementById('text-box').style.display = 'block';
+                } else {
+                    const errorMessage = await response.text();
+                    alert(`Registration failed: ${errorMessage}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Registration failed. Please check your connection and try again.');
+            }
+        }
+
+        async function saveText() {
+            const username = document.getElementById('username').value;
+            const text = document.getElementById('userText').value;
+
+            try {
+                const response = await fetch('http://localhost:5001/save-text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, text }),
+                });
+
+                if (response.ok) {
+                    alert('Text saved!');
+                    document.getElementById('userText').value = '';
+                } else {
+                    const errorMessage = await response.text();
+                    alert(`Failed to save text: ${errorMessage}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to save text. Please check your connection and try again.');
+            }
+        }
+    </script>
+</body>
+</html>
